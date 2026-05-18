@@ -965,3 +965,24 @@ function switchTab(groupId,paneId,btn){
   populateFilters();
   applyFilters();
 })();
+/* ══════════════════════════════════════════════════════
+   AUTO-LOAD DATA FROM REPOSITORY
+   Tenta carregar 'dados.xlsx' automaticamente ao iniciar
+══════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  const defaultFile = 'dados.xlsx';
+  fetch(defaultFile)
+    .then(response => {
+      if (response.ok) return response.arrayBuffer();
+      throw new Error('Arquivo dados.xlsx não encontrado no repositório.');
+    })
+    .then(data => {
+      showLoad(true);
+      parseWB(XLSX.read(data, { type: 'array' }), defaultFile);
+      console.log('Dados carregados automaticamente de:', defaultFile);
+    })
+    .catch(err => {
+      console.log(err.message);
+      // Se falhar, apenas mantém o estado inicial (aguardando upload manual)
+    });
+});
